@@ -1,0 +1,32 @@
+global:
+  domain: consul
+  image: hashicorp/consul:1.13.2
+  enabled: true
+  name: consul
+
+  tls:
+    enabled: true
+    enableAutoEncrypt: true
+    httpsOnly: false
+
+connectInject:
+  enabled: true
+  transparentProxy:
+    defaultEnabled: true
+
+controller:
+  enabled: true
+
+server:
+  enabled: true
+  replicas: 1 
+
+ui:
+  enabled: true
+  service:
+    enabled: true
+    type: NodePort
+    port:
+      https: 8501
+    nodePort:
+      https: 30001
