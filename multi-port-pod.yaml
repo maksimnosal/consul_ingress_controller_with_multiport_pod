@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: red
+spec:
+  selector:
+    app: red
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: green
+spec:
+  selector:
+    app: red ### this is on purpose
+  ports:
+    - protocol: TCP
+      port: 8082
+      targetPort: 8082
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: red
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: green
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: red
+  annotations:
+    kubernetes.io/service-account.name: red
+type: kubernetes.io/service-account-token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: green
+  annotations:
+    kubernetes.io/service-account.name: green
+type: kubernetes.io/service-account-token
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: red
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: red
+  template:
+    metadata:
+      name: red
+      labels:
+        app: red
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+        'consul.hashicorp.com/transparent-proxy': 'false'
+        'consul.hashicorp.com/connect-service': 'red,green'
+        'consul.hashicorp.com/connect-service-port': '8081,8082'
+    spec:
+      containers:
+        - name: red
+          image: larstobi/http-echo:0.2.4
+          args:
+            - -text="hello, this is RED"
+            - -listen=:8081
+          ports:
+            - containerPort: 8081
+              name: http
+        - name: green
+          image: larstobi/http-echo:0.2.4
+          args:
+            - -text="hello, this is GREEN"
+            - -listen=:8082
+          ports:
+            - containerPort: 8082
+              name: http
+      serviceAccountName: red
