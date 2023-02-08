@@ -1,0 +1,14 @@
+controller:
+  podAnnotations: {
+   consul.hashicorp.com/connect-inject: "true",
+   consul.hashicorp.com/connect-service: "ingress-frontend",
+   consul.hashicorp.com/transparent-proxy: "true",
+   consul.hashicorp.com/transparent-proxy-exclude-inbound-ports: "80,443,8443",
+  }
+  service: 
+    type: NodePort
+    nodePorts:
+      http: 30002
+    ports:
+      http: 80
+  
