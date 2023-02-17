@@ -1,9 +1,10 @@
 controller:
   podAnnotations: {
    consul.hashicorp.com/connect-inject: "true",
-   consul.hashicorp.com/connect-service: "ingress-frontend",
+   consul.hashicorp.com/connect-service: "ingress-nginx",
    consul.hashicorp.com/transparent-proxy: "true",
    consul.hashicorp.com/transparent-proxy-exclude-inbound-ports: "80,443,8443",
+  #  consul.hashicorp.com/connect-service-upstreams: "red:8081,green:8082,yellow:8083",
   }
   service: 
     type: NodePort
@@ -11,4 +12,5 @@ controller:
       http: 30002
     ports:
       http: 80
+  logLevel: debug
   

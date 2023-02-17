@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: blue
+  namespace: ingress-nginx
+spec:
+  selector:
+    app: blue
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: blue
+  namespace: ingress-nginx
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: blue
+  namespace: ingress-nginx
+  annotations:
+    kubernetes.io/service-account.name: blue
+type: kubernetes.io/service-account-token
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue
+  namespace: ingress-nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blue
+  template:
+    metadata:
+      name: blue
+      labels:
+        app: blue
+      annotations:
+        'consul.hashicorp.com/connect-inject': 'true'
+        'consul.hashicorp.com/transparent-proxy': 'true'
+    spec:
+      containers:
+        - name: blue
+          image: larstobi/http-echo:0.2.4
+          args:
+            - -text="hello, this is BLUE"
+            - -listen=:8083
+          ports:
+            - containerPort: 8083
+              name: http
+      serviceAccountName: blue

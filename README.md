@@ -1,22 +1,24 @@
 ### Description
-Simple Consul Connect setup with an Ingress Controller (NGINX) and a multi-port pod.
+A simple Consul on K8s setup with NGINX ingress controller and a multi-port pod as a backend
 
-### Steps to deploy
-can be copy/pasted in one go
+### Deploy:
 
-```
-kind create cluster --config kind-cluster.yaml
-kubectl create namespace consul
-kubectl create namespace ingress-nginx
-helm install consul hashicorp/consul -n consul --values consul_values.yaml --version 0.49.0
-helm install ingress-nginx ingress-nginx/ingress-nginx -n ingress-nginx --values nginxingress-values.yaml
-kubectl apply -f multi-port-pod.yaml -n ingress-nginx
-kubectl apply -f ingress.yaml -n ingress-nginx
-```
-### Test example:
-```
+./script-deploy.sh
+
+### Test:
+
 curl 0:30202/red
-"hello, this is RED"
 curl 0:30202/green
+curl 0:30202/blue
+
+Example:
+curl 0:30202/red
+curl 0:30202/green
+curl 0:30202/blue
+"hello, this is RED"
 "hello, this is GREEN"
-```
+"hello, this is BLUE"
+
+### Clean:
+
+./script-clean.sh

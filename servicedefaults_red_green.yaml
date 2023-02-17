@@ -1,0 +1,17 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: red
+  namespace: ingress-nginx
+spec:
+  transparentProxy:
+    dialedDirectly: true
+---
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: green
+  namespace: ingress-nginx
+spec:
+  transparentProxy:
+    dialedDirectly: true

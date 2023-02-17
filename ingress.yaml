@@ -1,7 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: frontend-nginx-ingress
+  name: ingress-red-green-blue
+  namespace: ingress-nginx
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: 10G
     nginx.ingress.kubernetes.io/enable-underscores-in-headers: "true"
@@ -10,6 +11,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "1200"
     nginx.ingress.kubernetes.io/upstream-keepalive-timeout: "300"
     nginx.ingress.kubernetes.io/proxy-buffer-size: 8k
+
 spec:
   ingressClassName: nginx
   rules:
@@ -29,4 +31,11 @@ spec:
             name: green
             port: 
               number: 8082
+      - path: /blue
+        pathType: Prefix
+        backend:
+          service:
+            name: blue
+            port: 
+              number: 8083
   
